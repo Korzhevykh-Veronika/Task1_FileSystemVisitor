@@ -1,4 +1,5 @@
 ﻿using FileSystemVisitor.EventHandlers;
+using FileSystemVisitor.FileSystemDataProviders;
 using System;
 
 namespace FileSystemVisitor
@@ -7,7 +8,7 @@ namespace FileSystemVisitor
     {
         static void Main(string[] args)
         {
-            var startupDataProvider = new ConsoleStartupDataProvider();
+            var startupDataProvider = new DefaultStartupDataProvider();
             var data = startupDataProvider.ProvideStartupData();
 
             if (data == null)
@@ -16,7 +17,7 @@ namespace FileSystemVisitor
             }
 
             bool ItemFilter(string name) => !name.EndsWith(data.ExtensionToExclude);
-            var fileSystemVisitor = new FileSystemVisitor(ItemFilter);
+            var fileSystemVisitor = new FileSystemVisitor(new FileSystemDataProvider(), ItemFilter);
             var eventHandler = new FileSystemVisitorEventHandler();
 
             eventHandler.Initialize(fileSystemVisitor);

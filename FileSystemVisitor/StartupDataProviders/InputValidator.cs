@@ -16,7 +16,7 @@ namespace FileSystemVisitor
         {
             string extension = Path.GetExtension(fileExtension);
 
-            return (string.IsNullOrEmpty(extension) || string.IsNullOrEmpty(fileExtension));
+            return (!string.IsNullOrEmpty(extension) || fileExtension == string.Empty);
         }
     }
 }

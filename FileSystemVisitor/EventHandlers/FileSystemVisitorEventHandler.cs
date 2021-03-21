@@ -23,9 +23,9 @@ namespace FileSystemVisitor.EventHandlers
         {
             fileSystemVisitor.OnStart += () => ConsoleExtensions.WriteLineLog("Process has been started \n");
             fileSystemVisitor.OnEnd += () => ConsoleExtensions.WriteLineLog("\nProcess has been finished \n");
-            fileSystemVisitor.OnDirectoryFinded += () => _directoryCount++;
-            fileSystemVisitor.OnFileFinded += () => _fileCount++;
-            fileSystemVisitor.OnFilteredDirectoryFinded += (name) =>
+            fileSystemVisitor.OnDirectoryFound += () => _directoryCount++;
+            fileSystemVisitor.OnFileFound += () => _fileCount++;
+            fileSystemVisitor.OnFilteredDirectoryFound += (name) =>
             {
                 _filteredDirectoryCount++;
 
@@ -37,7 +37,7 @@ namespace FileSystemVisitor.EventHandlers
 
                 return SearchOperation.ContinueSearch;
             };
-            fileSystemVisitor.OnFilteredFileFinded += (name) =>
+            fileSystemVisitor.OnFilteredFileFound += (name) =>
             {
                 _filteredFileCount++;
 

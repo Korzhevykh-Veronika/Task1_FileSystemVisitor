@@ -1,23 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
+using FileSystemVisitor.FileSystemDataProviders;
 using FileSystemVisitor.Models;
 
 namespace FileSystemVisitor
 {
     public class FileSystemVisitor
     {
+        private const string Indentation = "   ";
+        private const string PathFoldersSeparator = @"\";
+
         private readonly Delegates.Filter _filter;
+
+        private IFileSystemDataProvider _dataProvider;
 
         public event Delegates.ShowMessage OnStart;
         public event Delegates.ShowMessage OnEnd;
-        public event Delegates.ShowMessage OnFileFinded;
-        public event Delegates.ShowMessage OnDirectoryFinded;
-        public event Delegates.ProcessItem OnFilteredFileFinded;
-        public event Delegates.ProcessItem OnFilteredDirectoryFinded;
+        public event Delegates.ShowMessage OnFileFound;
+        public event Delegates.ShowMessage OnDirectoryFound;
+        public event Delegates.ProcessItem OnFilteredFileFound;
+        public event Delegates.ProcessItem OnFilteredDirectoryFound;
 
-        public FileSystemVisitor(Delegates.Filter filter)
+        public FileSystemVisitor(IFileSystemDataProvider dataProvider, Delegates.Filter filter)
         {
+            _dataProvider = dataProvider;
             _filter = filter;
         }
 
@@ -35,16 +42,23 @@ namespace FileSystemVisitor
 
         private IEnumerable<string> GetDirectoryInfoInternal(string path)
         {
-            var folders = Directory.GetDirectories(path);
+            var directoryInfo = GetFoldersInfo(path).Concat(GetFilesInfo(path));
+
+            return directoryInfo;
+        }
+
+        private IEnumerable<string> GetFoldersInfo(string path)
+        {
+            var folders = _dataProvider.GetFolders(path);
 
             foreach (var folder in folders)
             {
                 var folderName = GetItemWithOutPath(folder);
-                OnDirectoryFinded?.Invoke();
+                OnDirectoryFound?.Invoke();
 
                 if (!_filter(folderName)) continue;
-                
-                var operation = OnFilteredDirectoryFinded?.Invoke(folderName);
+
+                var operation = OnFilteredDirectoryFound?.Invoke(folderName);
 
                 if (operation == SearchOperation.ExcludeItem)
                 {
@@ -62,21 +76,24 @@ namespace FileSystemVisitor
 
                 foreach (var subItem in subItems)
                 {
-                    yield return "  " + subItem;
+                    yield return Indentation + subItem;
                 }
             }
+        }
 
-            var files = Directory.GetFiles(path);
+        private IEnumerable<string> GetFilesInfo(string path)
+        {
+            var files = _dataProvider.GetFiles(path);
 
             foreach (var file in files)
             {
                 var fileName = GetItemWithOutPath(file);
 
-                OnFileFinded?.Invoke();
+                OnFileFound?.Invoke();
 
                 if (!_filter(fileName)) continue;
 
-                var operation = OnFilteredFileFinded?.Invoke(fileName);
+                var operation = OnFilteredFileFound?.Invoke(fileName);
 
                 if (operation == SearchOperation.ExcludeItem)
                 {
@@ -94,9 +111,9 @@ namespace FileSystemVisitor
 
         private string GetItemWithOutPath(string path)
         {
-            var last = path.LastIndexOf(@"\", StringComparison.Ordinal);
+            var last = path.LastIndexOf(PathFoldersSeparator, StringComparison.Ordinal);
 
-            return path.Substring(last + 1);
+            return path[(last + 1)..];
         }
     }
 }
