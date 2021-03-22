@@ -1,8 +1,8 @@
-﻿using FileSystemVisitor.Models;
+﻿using System;
+using FileSystemVisitor.Models;
 using FileSystemVisitor.Utils;
-using System;
 
-namespace FileSystemVisitor
+namespace FileSystemVisitor.StartupDataProviders
 {
     public class ConsoleStartupDataProvider
     {
@@ -24,7 +24,7 @@ namespace FileSystemVisitor
             {
                 ConsoleExtensions.WriteLineFail("Incorrect path to the folder!");
                 return null;
-            };
+            }
 
             data.Path = path;
 

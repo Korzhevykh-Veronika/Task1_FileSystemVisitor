@@ -1,12 +1,9 @@
-﻿using FileSystemVisitor;
-using FileSystemVisitor.EventHandlers;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Reflection;
-using System.Text;
+using FileSystemVisitor.EventHandlers;
 using Xunit;
 
-namespace FileSystemVisitorTests
+namespace FileSystemVisitorTests.EventHandlers
 {
     public class FileSystemVisitorEventHandlerTests
     {
@@ -38,7 +35,7 @@ namespace FileSystemVisitorTests
             var type = objectWithEvent.GetType();
             var fieldInfo = type.GetField(eventName, allBindings);
 
-            var value = fieldInfo.GetValue(objectWithEvent);
+            var value = fieldInfo?.GetValue(objectWithEvent);
 
             var handler = value as Delegate;
 

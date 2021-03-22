@@ -10,14 +10,14 @@ namespace FileSystemVisitor.EventHandlers
         private const int MaxFilesToDisplayCount = 5;
         private const string FileToExcludeNameStart = "f";
 
-        private int _directoryCount = 0;
-        private int _fileCount = 0;
+        private int _directoryCount;
+        private int _fileCount;
 
-        private int _filteredDirectoryCount = 0;
-        private int _filteredFileCount = 0;
+        private int _filteredDirectoryCount;
+        private int _filteredFileCount;
 
-        private int _excludedDirectoryCount = 0;
-        private int _excludedFilesCount = 0;
+        private int _excludedDirectoryCount;
+        private int _excludedFilesCount;
 
         public void Initialize(FileSystemVisitor fileSystemVisitor)
         {
@@ -25,7 +25,7 @@ namespace FileSystemVisitor.EventHandlers
             fileSystemVisitor.OnEnd += () => ConsoleExtensions.WriteLineLog("\nProcess has been finished \n");
             fileSystemVisitor.OnDirectoryFound += () => _directoryCount++;
             fileSystemVisitor.OnFileFound += () => _fileCount++;
-            fileSystemVisitor.OnFilteredDirectoryFound += (name) =>
+            fileSystemVisitor.OnFilteredDirectoryFound += name =>
             {
                 _filteredDirectoryCount++;
 
@@ -37,7 +37,7 @@ namespace FileSystemVisitor.EventHandlers
 
                 return SearchOperation.ContinueSearch;
             };
-            fileSystemVisitor.OnFilteredFileFound += (name) =>
+            fileSystemVisitor.OnFilteredFileFound += name =>
             {
                 _filteredFileCount++;
 

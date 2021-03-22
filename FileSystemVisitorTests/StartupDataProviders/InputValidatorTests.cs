@@ -1,7 +1,7 @@
-﻿using FileSystemVisitor;
+﻿using FileSystemVisitor.StartupDataProviders;
 using Xunit;
 
-namespace FileSystemVisitorTests
+namespace FileSystemVisitorTests.StartupDataProviders
 {
     public class InputValidatorTests
     {

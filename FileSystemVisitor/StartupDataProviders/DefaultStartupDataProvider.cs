@@ -1,6 +1,6 @@
 ﻿using FileSystemVisitor.Models;
 
-namespace FileSystemVisitor
+namespace FileSystemVisitor.StartupDataProviders
 {
     public class DefaultStartupDataProvider
     {

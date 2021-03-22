@@ -1,12 +1,13 @@
 ﻿using FileSystemVisitor.EventHandlers;
 using FileSystemVisitor.FileSystemDataProviders;
 using System;
+using FileSystemVisitor.StartupDataProviders;
 
 namespace FileSystemVisitor
 {
     static class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var startupDataProvider = new DefaultStartupDataProvider();
             var data = startupDataProvider.ProvideStartupData();

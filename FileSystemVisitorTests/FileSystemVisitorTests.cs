@@ -33,7 +33,7 @@ namespace FileSystemVisitorTests
                 .Setup(provider => provider.GetFiles(path + "\\folder1"))
                 .Returns(new[] { path + "\\folder1" + "\\file3.txt" });
 
-            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, (string name) => true);
+            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, name => true);
 
             // Act
             var result = visitor.GetDirectoryInfo(path).ToList();
@@ -87,7 +87,7 @@ namespace FileSystemVisitorTests
                 .Returns(new[] { path + "\\file1.txt" });
 
 
-            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, (string name) => true);
+            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, name => true);
 
             // Act
             var result = visitor.GetDirectoryInfo(path).ToList();
@@ -113,7 +113,7 @@ namespace FileSystemVisitorTests
                 .Setup(provider => provider.GetFiles(path))
                 .Returns(new[] { path + "\\file1.txt" });
 
-            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, (string name) => true);
+            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, name => true);
 
             visitor.OnStart += () => { countOnStartCalled++; };
 
@@ -121,6 +121,7 @@ namespace FileSystemVisitorTests
             var result = visitor.GetDirectoryInfo(path).ToList();
 
             // Assert
+            Assert.NotNull(result);
             Assert.Equal(1, countOnStartCalled);
         }
 
@@ -141,7 +142,7 @@ namespace FileSystemVisitorTests
                 .Setup(provider => provider.GetFiles(path))
                 .Returns(new[] { path + "\\file1.txt" });
 
-            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, (string name) => true);
+            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, name => true);
 
             visitor.OnEnd += () => { countOnEndCalled++; };
 
@@ -149,6 +150,7 @@ namespace FileSystemVisitorTests
             var result = visitor.GetDirectoryInfo(path).ToList();
 
             // Assert
+            Assert.NotNull(result);
             Assert.Equal(1, countOnEndCalled);
         }
 
@@ -167,7 +169,7 @@ namespace FileSystemVisitorTests
 
             dataProviderMock
                 .Setup(provider => provider.GetFolders(path + "\\folder1"))
-                .Returns(new string[] { path + "\\folder1" + "\\folder2" });
+                .Returns(new[] { path + "\\folder1" + "\\folder2" });
 
             dataProviderMock
                 .Setup(provider => provider.GetFolders(path + "\\folder1" + "\\folder2"))
@@ -181,7 +183,7 @@ namespace FileSystemVisitorTests
                 .Setup(provider => provider.GetFiles(path + "\\folder1"))
                 .Returns(new[] { path + "\\folder1" + "\\file3.txt" });
 
-            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, (string name) => true);
+            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, name => true);
 
             visitor.OnDirectoryFound += () => { countOnDirectoryFoundCalled++; };
 
@@ -189,6 +191,7 @@ namespace FileSystemVisitorTests
             var result = visitor.GetDirectoryInfo(path).ToList();
 
             // Assert
+            Assert.NotNull(result);
             Assert.Equal(2, countOnDirectoryFoundCalled);
         }
 
@@ -217,7 +220,7 @@ namespace FileSystemVisitorTests
                 .Setup(provider => provider.GetFiles(path + "\\folder1"))
                 .Returns(new[] { path + "\\folder1" + "\\file3.txt" });
 
-            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, (string name) => true);
+            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, name => true);
 
             visitor.OnFileFound += () => { countOnFileFoundCalled++; };
 
@@ -225,6 +228,7 @@ namespace FileSystemVisitorTests
             var result = visitor.GetDirectoryInfo(path).ToList();
 
             // Assert
+            Assert.NotNull(result);
             Assert.Equal(3, countOnFileFoundCalled);
         }
 
@@ -248,7 +252,7 @@ namespace FileSystemVisitorTests
             bool filter(string name) => name != "file2.txt";
 
             var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, filter);
-            visitor.OnFilteredFileFound += (string name) =>
+            visitor.OnFilteredFileFound += name =>
             {
                 countOfFilteredItems++;
                 return SearchOperation.ContinueSearch;
@@ -258,6 +262,7 @@ namespace FileSystemVisitorTests
             var result = visitor.GetDirectoryInfo(path).ToList();
 
             // Assert
+            Assert.NotNull(result);
             Assert.Equal(1, countOfFilteredItems);
         }
 
@@ -285,7 +290,7 @@ namespace FileSystemVisitorTests
             bool filter(string name) => name != "folder2";
 
             var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, filter);
-            visitor.OnFilteredDirectoryFound += (string name) =>
+            visitor.OnFilteredDirectoryFound += name =>
             {
                 countOfFilteredItems++;
                 return SearchOperation.ContinueSearch;
@@ -295,6 +300,7 @@ namespace FileSystemVisitorTests
             var result = visitor.GetDirectoryInfo(path).ToList();
 
             // Assert
+            Assert.NotNull(result);
             Assert.Equal(1, countOfFilteredItems);
         }
 
@@ -314,8 +320,8 @@ namespace FileSystemVisitorTests
                 .Setup(provider => provider.GetFiles(path))
                 .Returns(new[] { path + "\\file1.txt", path + "\\file2.txt", path + "\\file3.txt" });
 
-            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, (string name) => true);
-            visitor.OnFilteredFileFound += (string name) =>
+            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, name => true);
+            visitor.OnFilteredFileFound += name =>
             {
                 if (name == "file2.txt")
                 {
@@ -352,8 +358,8 @@ namespace FileSystemVisitorTests
                 .Setup(provider => provider.GetFolders(path + "\\folder2"))
                 .Returns(new string[] { });
 
-            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, (string name) => true);
-            visitor.OnFilteredDirectoryFound += (string name) =>
+            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, name => true);
+            visitor.OnFilteredDirectoryFound += name =>
             {
                 if (name == "folder1")
                 {
@@ -386,8 +392,8 @@ namespace FileSystemVisitorTests
                 .Setup(provider => provider.GetFiles(path))
                 .Returns(new[] { path + "\\file1.txt", path + "\\file2.txt", path + "\\file3.txt" });
 
-            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, (string name) => true);
-            visitor.OnFilteredFileFound += (string name) =>
+            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, name => true);
+            visitor.OnFilteredFileFound += name =>
             {
                 if (name == "file1.txt")
                 {
@@ -424,8 +430,8 @@ namespace FileSystemVisitorTests
                 .Setup(provider => provider.GetFolders(path + "\\folder2"))
                 .Returns(new string[] { });
 
-            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, (string name) => true);
-            visitor.OnFilteredDirectoryFound += (string name) =>
+            var visitor = new FileSystemVisitor.FileSystemVisitor(dataProviderMock.Object, name => true);
+            visitor.OnFilteredDirectoryFound += name =>
             {
                 if (name == "folder1")
                 {
